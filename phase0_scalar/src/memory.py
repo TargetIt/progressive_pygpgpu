@@ -8,6 +8,7 @@ Phase 0: 平坦内存模型，256 words × 32-bit (1KB)，按字寻址。
 参考: GPGPU-Sim gpgpu-sim/memory_partition_unit 的 L2/DRAM 接口
       TinyGPU 的 global memory 实现 (bytearray)
 """
+# [phase0_scalar added]
 
 
 class Memory:

@@ -76,6 +76,7 @@ OP_SHLD = 0x31  # rd = shared_mem[imm]
 OP_SHST = 0x32  # shared_mem[imm] = rs1
 
 # --- Tensor Core (Phase 9) ---
+# [phase9_tensor added]
 OP_MMA = 0x41  # rd = rs1.hi*rs2.hi + rs1.lo*rs2.lo + rs3
 
 # 操作码名称映射

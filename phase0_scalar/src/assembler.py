@@ -15,6 +15,7 @@ Assembler — 汇编器模块
 参考: GPGPU-Sim cuda-sim/ptx_parser.cc 的 PTX 语法解析
       RISC-V 汇编器设计 (asm-parser pattern)
 """
+# [phase0_scalar added]
 
 try:
     from .isa import (

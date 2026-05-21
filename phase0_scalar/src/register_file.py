@@ -10,6 +10,7 @@ r0 硬连线为 0 — 写忽略，读恒为 0。
 参考: GPGPU-Sim shader.h 中的寄存器管理
       TinyGPU 的 per-thread register file
 """
+# [phase0_scalar added]
 
 
 class RegisterFile:

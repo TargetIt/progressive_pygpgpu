@@ -13,6 +13,7 @@ Phase 10: Warp Timeline, Stall Analysis, Memory Heatmap, JSON Export.
 
 参考: GPGPU-Sim gpgpu-sim/visualizer.cc
 """
+# [phase10_viz added]
 
 import json
 from typing import List, Dict, Optional

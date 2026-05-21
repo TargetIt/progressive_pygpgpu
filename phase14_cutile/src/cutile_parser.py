@@ -15,6 +15,7 @@ CuTile 语法 (简化):
 参考: CUTLASS (github.com/NVIDIA/cutlass)
       Triton DSL (github.com/openai/triton)
 """
+# [phase14_cutile added]
 
 import re
 from typing import List, Tuple, Dict, Optional

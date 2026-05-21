@@ -3,6 +3,7 @@ TraceRunner — 带追踪的模拟器运行器
 =====================================
 包装 SIMTCore，在每次 step() 时记录事件。
 """
+# [phase10_viz added]
 from visualizer import TraceCollector, full_report
 from isa import OPCODE_NAMES, OP_LD, OP_ST, OP_SHLD, OP_SHST
 

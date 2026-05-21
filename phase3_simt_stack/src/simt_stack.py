@@ -13,6 +13,7 @@ GPGPU-Sim 的 simt_stack 使用编译时分析得到的 IPDOM 信息
 
 参考: GPGPU-Sim gpgpu-sim/stack.cc 中 simt_stack 实现
 """
+# [phase3_simt_stack added]
 
 from dataclasses import dataclass
 from typing import List, Optional

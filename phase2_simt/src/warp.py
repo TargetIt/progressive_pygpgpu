@@ -13,6 +13,7 @@ Phase 2 实现: 线程独立寄存器 + 共享 PC + active mask + barrier。
 
 参考: GPGPU-Sim gpgpu-sim/shader.h 中 shd_warp_t 定义
 """
+# [phase2_simt added]
 
 from typing import List
 from register_file import RegisterFile

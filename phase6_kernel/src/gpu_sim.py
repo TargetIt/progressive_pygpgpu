@@ -7,6 +7,7 @@ Phase 6: 整合 Phase 0-5 的所有模块，提供 CUDA 风格的 grid/block lau
 
 参考: GPGPU-Sim gpgpu-sim/gpu-sim.cc 中 gpgpu_sim::launch()
 """
+# [phase6_kernel added]
 
 from typing import List
 from simt_core import SIMTCore

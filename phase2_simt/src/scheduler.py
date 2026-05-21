@@ -11,6 +11,7 @@ GPGPU-Sim 的 scheduler_unit 通过 issue() 方法从 I-Buffer 中
 
 参考: GPGPU-Sim gpgpu-sim/shader.cc 中 scheduler_unit 实现
 """
+# [phase2_simt added]
 
 from typing import List, Optional
 from warp import Warp

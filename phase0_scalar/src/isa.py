@@ -13,6 +13,7 @@ ISA (Instruction Set Architecture) — 指令集定义与译码模块
 参考: RISC-V RV32I 指令格式 (riscv.org)
       TinyGPU 的指令集定义 (github.com/deaneeth/tinygpu)
 """
+# [phase0_scalar added]
 
 from dataclasses import dataclass
 

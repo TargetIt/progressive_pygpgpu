@@ -7,6 +7,7 @@ SharedMemory — 共享内存模块
 
 参考: GPGPU-Sim gpgpu-sim/shader.cc 中的 shared memory 实现
 """
+# [phase5_memory added]
 
 
 class SharedMemory:

@@ -77,6 +77,7 @@ OP_VOTE   = 0x33  # rd = ANY/ALL of rs1 across warp
 OP_BALLOT = 0x34  # rd = bitmask of threads where rs1 != 0
 
 # --- Tiling (Phase 13) ---
+# [phase13_tiling added]
 OP_TLCONF = 0x35  # tile config: rd=tile_M, rs1=tile_N, imm=tile_K
 OP_TLDS   = 0x36  # tile load: rs1=global_base, rs2=thread_id stride, imm=shared_offset
 OP_TLSTS  = 0x37  # tile store: rs1=shared_offset, rs2=thread_id stride, imm=global_base

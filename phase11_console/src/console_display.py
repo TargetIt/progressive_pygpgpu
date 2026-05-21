@@ -6,6 +6,7 @@ Console Display — 学习控制台渲染模块
 
 初学者可以逐周期观察 GPU 内部的工作方式。
 """
+# [phase11_console added]
 
 from isa import OPCODE_NAMES
 from operand_collector import OperandCollector

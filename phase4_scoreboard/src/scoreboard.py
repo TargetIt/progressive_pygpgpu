@@ -15,6 +15,7 @@ Phase 3 简化为每个周期的自动延迟递减。
 
 参考: GPGPU-Sim gpgpu-sim/scoreboard.h
 """
+# [phase4_scoreboard added]
 
 
 class Scoreboard:

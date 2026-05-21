@@ -19,6 +19,7 @@ Interactive commands:
   reg         Print all registers (non-zero, r0-r15)
   q           Quit
 """
+# [phase0_scalar added]
 
 import sys
 import os

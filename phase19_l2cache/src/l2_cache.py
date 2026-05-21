@@ -19,6 +19,7 @@ Bandwidth Model / 带宽模型:
 参考: NVIDIA H100 L2 Cache (50MB, shared across GPCs)
       GPGPU-Sim memory_partition_unit
 """
+# [phase19_l2cache added]
 
 from typing import Optional, List, Tuple
 

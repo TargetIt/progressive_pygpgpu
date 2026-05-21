@@ -72,6 +72,7 @@ WREG_NAMES = {
 }
 
 # --- Warp Communication (Phase 12) ---
+# [phase12_warp_comm added]
 OP_SHFL   = 0x30  # rd = thread[src_lane].rs1  (warp shuffle)
 OP_VOTE   = 0x33  # rd = ANY/ALL of rs1 across warp
 OP_BALLOT = 0x34  # rd = bitmask of threads where rs1 != 0

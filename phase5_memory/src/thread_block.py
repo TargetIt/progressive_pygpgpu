@@ -7,6 +7,7 @@ ThreadBlock (CTA) — 协作线程阵列
 
 参考: GPGPU-Sim 的 thread block / CTA 概念
 """
+# [phase5_memory added]
 
 from shared_memory import SharedMemory
 

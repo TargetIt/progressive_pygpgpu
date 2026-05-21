@@ -20,6 +20,7 @@ Volta 的独立线程调度:
   - "Independent Thread Scheduling" in CUDA Programming Guide
   - GPGPU-Sim's divergence tracking
 """
+# [phase23_independent_thread added]
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set

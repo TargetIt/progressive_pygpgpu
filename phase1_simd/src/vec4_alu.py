@@ -6,6 +6,7 @@ Vec4ALU — Vec4 复合数据类型算术逻辑单元
 
 布局: [byte3:24-31] [byte2:16-23] [byte1:8-15] [byte0:0-7]
 """
+# [phase1_simd added]
 
 
 class Vec4ALU:

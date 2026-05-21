@@ -11,6 +11,7 @@ valid=已填充, ready=译码+scoreboard检查完成。
 
 参考: GPGPU-Sim gpgpu-sim/shader.cc 中的 fetch/decode/issue 实现
 """
+# [phase7_pipeline added]
 
 from dataclasses import dataclass
 from typing import Optional, List

@@ -13,6 +13,7 @@ FP8 是 LLM 推理的事实标准: H100 FP8 吞吐 = 2x INT8 吞吐。
 参考: NVIDIA FP8 formats (docs.nvidia.com/deeplearning/transformer-engine)
       IEEE 754 half-precision
 """
+# [phase21_mixed_precision added]
 
 import struct
 from typing import Tuple

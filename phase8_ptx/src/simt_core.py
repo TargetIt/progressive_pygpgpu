@@ -545,8 +545,16 @@ class SIMTCore:
             parts.append(f"ISSUE:W{iinfo['wid']} PC={iinfo['pc']}:{opname} r{iinfo['rd']}=r{iinfo['rs1']},r{iinfo['rs2']} act={mask_str}")
             curr_regs = self._snapshot_regs()
             reg_diffs = []
+            # Always show the instruction's destination register for ALL active threads
+            if iinfo['rd'] != 0:
+                for tid in range(self.warp_size):
+                    if (iinfo['mask'] >> tid) & 1:
+                        ov = self._t_regs.get((iinfo['wid'], tid, iinfo['rd']), 0)
+                        nv = curr_regs.get((iinfo['wid'], tid, iinfo['rd']), 0)
+                        reg_diffs.append(f"T{tid}:r{iinfo['rd']}={ov}->{nv}")
+            # Show any other register diffs (not rd, which was already handled)
             for (w_, t_, r_), nv in curr_regs.items():
-                if w_ == iinfo['wid']:
+                if w_ == iinfo['wid'] and r_ != iinfo['rd']:
                     ov = self._t_regs.get((w_, t_, r_), 0)
                     if ov != nv:
                         reg_diffs.append(f"T{t_}:r{r_}={ov}->{nv}")

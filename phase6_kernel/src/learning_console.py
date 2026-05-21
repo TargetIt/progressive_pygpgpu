@@ -614,7 +614,7 @@ def main():
     asm_file = sys.argv[1]
     args = {
         'warp_size': 4,
-        'num_warps': 1,
+        'num_warps': 2,
         'grid_dim': (1,),
         'block_dim': None,
         'max_cycles': 500,

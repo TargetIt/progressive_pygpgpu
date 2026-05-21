@@ -8,6 +8,7 @@ ALU (Arithmetic Logic Unit) — 算术逻辑单元
 参考: GPGPU-Sim gpgpu-sim/shader.cc 中 simd_function_unit::cycle()
       的 SP 管线实现
 """
+# [phase0_scalar added]
 
 
 class ALU:

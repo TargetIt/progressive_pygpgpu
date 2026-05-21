@@ -11,6 +11,7 @@ Roofline Model 帮助判断 kernel 是 compute-bound 还是 memory-bound:
       Performance Model for Multicore Architectures"
       NVIDIA Nsight Compute (docs.nvidia.com/nsight-compute)
 """
+# [phase18_perf_model added]
 
 from typing import Dict, List, Tuple
 

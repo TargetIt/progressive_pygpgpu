@@ -523,7 +523,7 @@ def main():
 
     asm_file = sys.argv[1]
     args = {
-        'warp_size': 4, 'num_warps': 1,
+        'warp_size': 4, 'num_warps': 2,
         'max_cycles': 500,
         'auto': False,
     }

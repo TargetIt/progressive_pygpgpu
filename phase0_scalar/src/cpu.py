@@ -10,6 +10,7 @@ Phase 0 实现最简执行模型: Fetch → Decode → Execute → Writeback
       的流水线实现 (fetch/decode/issue/read_operand/execute/writeback)
       TinyGPU 的 GPU 类 (github.com/deaneeth/tinygpu)
 """
+# [phase0_scalar added]
 
 try:
     from .isa import Instruction, decode, OP_HALT, OP_ADD, OP_SUB, OP_MUL, OP_DIV, OP_LD, OP_ST, OP_MOV, OPCODE_NAMES

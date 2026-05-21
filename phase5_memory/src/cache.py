@@ -8,6 +8,7 @@ Phase 5 实现直接映射 (direct-mapped) L1 Cache。
 
 参考: GPGPU-Sim gpgpu-sim/gpu-cache.cc
 """
+# [phase5_memory added]
 
 from dataclasses import dataclass
 from typing import Optional

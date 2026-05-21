@@ -512,8 +512,16 @@ class SIMTCore:
         parts = [f"[Cycle {cycle}] W{wid} PC={old_pc}: {desc} | active=0b{mask_str}"]
         curr_regs = self._snapshot_regs()
         reg_diffs = []
+        # Always show the instruction's destination register for ALL active threads
+        if instr.rd != 0 and instr.opcode not in (OP_JMP, OP_BEQ, OP_BNE):
+            for tid in range(self.warp_size):
+                if (new_mask >> tid) & 1:
+                    ov = self._t_regs.get((wid, tid, instr.rd), 0)
+                    nv = curr_regs.get((wid, tid, instr.rd), 0)
+                    reg_diffs.append(f"T{tid}:r{instr.rd}={ov}->{nv}")
+        # Show any other register diffs (not rd, which was already handled)
         for (w_, t_, r_), nv in curr_regs.items():
-            if w_ == wid:
+            if w_ == wid and r_ != instr.rd:
                 ov = self._t_regs.get((w_, t_, r_), 0)
                 if ov != nv:
                     reg_diffs.append(f"T{t_}:r{r_}={ov}->{nv}")

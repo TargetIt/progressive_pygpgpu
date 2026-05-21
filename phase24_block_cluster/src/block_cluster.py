@@ -21,6 +21,7 @@ Hopper 的 Cluster 特性:
   - CUDA Programming Guide: Thread Block Clusters
   - GPGPU-Sim's cluster model
 """
+# [phase24_block_cluster added]
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple

@@ -12,6 +12,7 @@ Graph Executor — Graph Scheduling & Optimization (Phase 16)
 参考: CUDA Graphs (docs.nvidia.com/cuda)
       XLA buffer assignment (tensorflow.org/xla)
 """
+# [phase16_graph_sched added]
 
 from typing import Dict, List, Optional, Tuple, Set
 from dataclasses import dataclass, field

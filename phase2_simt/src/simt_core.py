@@ -12,6 +12,7 @@ Warp 内线程访存时使用 base_addr + thread_id 作为实际地址，
 参考: GPGPU-Sim gpgpu-sim/shader.cc 中 shader_core_ctx::cycle()
       的 6 级流水线及 warp 管理
 """
+# [phase2_simt added]
 
 try:
     from .isa import (Instruction, decode,
@@ -284,8 +285,16 @@ class SIMTCore:
         parts = [f"[Cycle {cycle}] W{wid} PC={old_pc}: {opname} rd=r{instr.rd} rs1=r{instr.rs1} rs2=r{instr.rs2} imm={instr.imm} | active=0b{mask_str}"]
         curr_regs = self._snapshot_regs()
         reg_diffs = []
+        # Always show the instruction's destination register for ALL active threads
+        if instr.rd != 0:
+            for tid in range(self.warp_size):
+                if (warp.active_mask >> tid) & 1:
+                    ov = self._t_regs.get((wid, tid, instr.rd), 0)
+                    nv = curr_regs.get((wid, tid, instr.rd), 0)
+                    reg_diffs.append(f"T{tid}:r{instr.rd}={ov}->{nv}")
+        # Show any other register diffs (not rd, which was already handled)
         for (w_, t_, r_), nv in curr_regs.items():
-            if w_ == wid:
+            if w_ == wid and r_ != instr.rd:
                 ov = self._t_regs.get((w_, t_, r_), 0)
                 if ov != nv:
                     reg_diffs.append(f"T{t_}:r{r_}={ov}->{nv}")

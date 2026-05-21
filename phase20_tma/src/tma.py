@@ -16,6 +16,7 @@ TMA 是 Hopper 架构最大的创新之一。它是一个专用的硬件单元,
 参考: NVIDIA H100 TMA (docs.nvidia.com/cuda/hopper-tuning-guide)
       CUTLASS 3.x TMA abstraction
 """
+# [phase20_tma added]
 
 from typing import List, Tuple, Optional, Dict
 

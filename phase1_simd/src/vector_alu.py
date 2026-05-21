@@ -10,6 +10,7 @@ GPGPU-Sim 的 simd_function_unit 在 execute() 阶段对 warp 中
 
 参考: GPGPU-Sim gpgpu-sim/shader.cc 中 simd_function_unit::cycle()
 """
+# [phase1_simd added]
 
 from typing import List
 from alu import ALU

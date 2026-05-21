@@ -11,6 +11,7 @@ Pipeline:
 参考: NVIDIA PTX ISA 文档 (docs.nvidia.com/cuda/parallel-thread-execution)
       GPGPU-Sim cuda-sim/ptx.l / ptx.y (Lex/Yacc PTX 解析器)
 """
+# [phase8_ptx added]
 
 import re
 from typing import List, Tuple, Dict, Optional

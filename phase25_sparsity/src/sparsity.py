@@ -20,6 +20,7 @@ NVIDIA 稀疏张量核心:
   - "Accelerating Matrix Multiplication with 2:4 Structured Sparsity"
   - CUDA Programming Guide: Sparse MMA
 """
+# [phase25_sparsity added]
 
 from dataclasses import dataclass
 from typing import List, Tuple

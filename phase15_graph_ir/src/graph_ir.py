@@ -10,6 +10,7 @@ Graph IR 是一种有向无环图 (DAG)，节点表示计算操作
 参考: CUDA Graphs API (docs.nvidia.com/cuda/cuda-c-programming-guide)
       XLA HLO (tensorflow.org/xla)
 """
+# [phase15_graph_ir added]
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Set

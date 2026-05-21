@@ -15,6 +15,7 @@ Async Pipeline — Software-Managed Pipelining (Phase 22)
   - Hopper TMA + async pipeline
   - GPGPU-Sim's pipeline model
 """
+# [phase22_async_pipeline added]
 
 from enum import IntEnum
 from typing import Callable, List, Optional
