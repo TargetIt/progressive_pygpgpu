@@ -4,12 +4,17 @@ GPUSim — GPU 模拟器顶层 + Kernel Launch + Performance Monitor
 对标 GPGPU-Sim 中 gpgpu_sim 顶层类的 kernel launch 和性能统计功能。
 
 Phase 6: 整合 Phase 0-5 的所有模块，提供 CUDA 风格的 grid/block launch。
+Phase 6.1: SM 池 + block 分配器 + 多 SM 并行调度。
+  - pending_blocks 队列管理待调度 block
+  - SM 池 (SM0, SM1, ..., SMN) 并行执行
+  - 每个 cycle: 空闲 SM 取 block, 所有 SM 各执行一步
+  - block 完成后 SM 释放，再取下一个
 
 参考: GPGPU-Sim gpgpu-sim/gpu-sim.cc 中 gpgpu_sim::launch()
 """
 # [phase6_kernel added]
 
-from typing import List
+from typing import List, Optional, Tuple
 from simt_core import SIMTCore
 
 
@@ -45,13 +50,69 @@ class PerfCounters:
         )
 
 
+# [phase6_kernel added] SM pool + block allocator
+class SM:
+    """Streaming Multiprocessor — 执行一个 thread block
+
+    对应 GPGPU-Sim 中 shader_core_ctx 的上层 wrapper。
+    每个 SM 同一时刻只运行一个 block，block 完成后释放。
+    """
+
+    def __init__(self, sm_id: int, warp_size: int = 8, memory_size: int = 1024):
+        self.sm_id = sm_id
+        self.warp_size = warp_size
+        self.memory_size = memory_size
+        self.core: Optional[SIMTCore] = None
+        self.busy = False
+        self.block_id = -1
+        self.completed_blocks = 0
+        self.total_cycles = 0
+
+    def assign_block(self, block_id: int, program: list, num_warps: int):
+        """分配一个 block 到此 SM"""
+        self.core = SIMTCore(
+            warp_size=self.warp_size,
+            num_warps=num_warps,
+            memory_size=self.memory_size
+        )
+        self.core.load_program(program)
+        self.busy = True
+        self.block_id = block_id
+
+    def step(self) -> bool:
+        """执行一个周期。返回 True 表示 SM 仍忙碌（block 未完成）。"""
+        if not self.busy or self.core is None:
+            return False
+        self.total_cycles += 1
+        has_active = self.core.step()
+        if not has_active:
+            self.busy = False
+            self.completed_blocks += 1
+        return self.busy
+
+    def release(self):
+        """手动释放 SM"""
+        self.busy = False
+        self.block_id = -1
+
+
 class GPUSim:
-    """GPU 模拟器顶层
+    """GPU 模拟器顶层 — SM 池 + block 分配器
 
     对应 GPGPU-Sim 的 gpgpu_sim 类。
 
+    调度流程:
+        pending_blocks 队列
+        SM0, SM1, ..., SMN
+        每个 cycle:
+          空闲 SM 从 pending_blocks 取一个 block
+          所有非空闲 SM 各执行一步
+          block 完成后 SM 释放，再取下一个 block
+
     Attributes:
-        cores: SIMT 核心列表 (每个 SM 一个)
+        sms: SM 列表 (SM 池)
+        pending_blocks: 待调度的 block 队列
+        cores: 兼容旧接口 — 指向所有已创建过的 SIMTCore
         perf: 性能计数器
     """
 
@@ -60,15 +121,17 @@ class GPUSim:
         self.num_sms = num_sms
         self.warp_size = warp_size
         self.memory_size = memory_size
-        self.cores: List[SIMTCore] = []
+        self.sms: List[SM] = [SM(i, warp_size, memory_size) for i in range(num_sms)]
+        self.pending_blocks: List[Tuple[int, list, int]] = []  # (block_id, program, num_warps)
+        self.cores: List[SIMTCore] = []  # 兼容旧接口
         self.perf = PerfCounters()
+        self.total_cycles = 0
 
     def launch_kernel(self, program: list[int], grid_dim: tuple = (1,),
                       block_dim: tuple = (8,)):
         """启动 kernel（对标 CUDA kernel launch）
 
-        GPGPU-Sim 对应: gpgpu_sim::launch() 创建 grid/block 结构。
-        Phase 6: 顺序执行所有 blocks（简化，不模拟并行 SM）。
+        将 block 放入 pending_blocks 队列，等待 SM 调度。
 
         Args:
             program: 机器码列表
@@ -83,80 +146,81 @@ class GPUSim:
             total_threads *= d
 
         num_warps_per_block = max(1, total_threads // self.warp_size)
-        self.cores = []
 
         for block_id in range(total_blocks):
-            core = SIMTCore(
-                warp_size=self.warp_size,
-                num_warps=num_warps_per_block,
-                memory_size=self.memory_size
-            )
-            core.load_program(program)
-            self.cores.append(core)
+            self.pending_blocks.append((block_id, list(program), num_warps_per_block))
 
         print(f"Kernel launched: {total_blocks} block(s) x "
               f"{num_warps_per_block} warp(s) x "
               f"{self.warp_size} threads/warp = "
-              f"{total_blocks * num_warps_per_block * self.warp_size} threads")
+              f"{total_blocks * num_warps_per_block * self.warp_size} threads "
+              f"on {self.num_sms} SM(s)")
 
-    def run(self):
-        """运行所有 core 直到完成，收集性能数据"""
+    def _assign_idle_sms(self):
+        """将空闲 SM 分配给 pending_blocks 队列中的 block"""
+        for sm in self.sms:
+            if not sm.busy and self.pending_blocks:
+                block_id, program, num_warps = self.pending_blocks.pop(0)
+                sm.assign_block(block_id, program, num_warps)
+                self.cores.append(sm.core)
+
+    def _any_sm_busy(self) -> bool:
+        return any(sm.busy for sm in self.sms)
+
+    def run(self, trace: bool = False):
+        """SM 池并行调度：每个 cycle 所有 SM 各执行一步
+
+        Args:
+            trace: 是否输出每周期 trace 信息
+        """
         self.perf = PerfCounters()
-        for core in self.cores:
-            while True:
-                self.perf.total_cycles += 1
-                # Check if any warp is stalled
-                any_stalled = False
-                for w in core.warps:
-                    w.scoreboard.advance()
-                    if w.scoreboard.stalled:
-                        w.scoreboard_stalled = False
-                    else:
-                        w.scoreboard_stalled = w.scoreboard.stalled
-                        if w.scoreboard_stalled:
-                            self.perf.stall_scoreboard += 1
-                            any_stalled = True
-                    if w.at_barrier:
-                        self.perf.stall_barrier += 1
-                        any_stalled = True
+        self.total_cycles = 0
+        cycle = 0
 
-                warp = core.scheduler.select_warp()
-                if warp is None:
-                    if not core.scheduler.has_active_warps():
-                        break
-                    continue
+        while self.pending_blocks or self._any_sm_busy():
+            # 空闲 SM 取 block
+            self._assign_idle_sms()
+            # 新分配的 core 初始化 trace state
+            if trace:
+                for sm in self.sms:
+                    if sm.busy and sm.core and sm.core.instr_count == 0:
+                        if not hasattr(sm, '_trace_inited') or not sm._trace_inited:
+                            sm.core._update_trace_state()
+                            sm._trace_inited = True
 
-                if not any_stalled:
-                    self.perf.active_cycles += 1
+            # 所有 SM 执行一步
+            for sm in self.sms:
+                if sm.busy:
+                    sm.step()
 
-                # Reconvergence check
-                if warp.simt_stack.at_reconvergence(warp.pc):
-                    core._handle_reconvergence(warp)
+            # Trace output
+            if trace:
+                for sm in self.sms:
+                    if sm.busy and sm.core and sm.core._last_warp_id >= 0:
+                        sm.core._trace_step(cycle)
 
-                if warp.pc >= len(core.program):
-                    warp.done = True
-                    continue
+            self.total_cycles += 1
+            cycle += 1
 
-                # Issue: fetch + decode + execute
-                raw_word = core.program[warp.pc]
-                instr = decode_wrapper(raw_word)
+        if trace:
+            total_instr = sum(sm.core.instr_count if sm.core else 0 for sm in self.sms)
+            print(f"[Summary] {cycle} cycles, {total_instr} instructions")
 
-                sb = warp.scoreboard
-                if sb.check_waw(instr.rd) or sb.check_raw(instr.rs1, instr.rs2):
-                    warp.scoreboard_stalled = True
-                    self.perf.stall_scoreboard += 1
-                    continue
-
-                old_pc = warp.pc
-                warp.pc += 1
-                core._execute_warp(warp, instr, old_pc)
-                self.perf.total_instructions += 1
-
-                latency = core._get_latency(instr.opcode)
-                sb.reserve(instr.rd, latency)
+        # 收集性能数据
+        for sm in self.sms:
+            self.perf.total_cycles = max(self.perf.total_cycles, sm.total_cycles)
+            if sm.core:
+                self.perf.total_instructions += sm.core.instr_count
+                self.perf.active_cycles += sm.total_cycles
 
     def report(self):
         """打印性能报告"""
+        print(f"Total cycles: {self.total_cycles}")
+        print(f"SM utilization: {self.num_sms} SM(s) used")
+        for sm in self.sms:
+            status = "completed" if not sm.busy else "busy"
+            print(f"  SM{sm.sm_id}: {sm.completed_blocks} block(s), "
+                  f"{sm.total_cycles} cycles, {status}")
         print(self.perf.report())
         for i, core in enumerate(self.cores):
             print(f"\nBlock {i}:")
