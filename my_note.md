@@ -1,4 +1,119 @@
 
+## phase6 phase6_kernel\src\gpu_sim.py 分grid, block warp, thread目的是啥
+
+`phase6_kernel/src/gpu_sim.py` 把执行分成 **grid / block / warp / thread**，主要是为了模拟 CUDA/GPU 的真实执行层次，让 Phase 5 之前“单个 SIMTCore 手动跑程序”的模型，升级成“kernel launch”。
+
+层次含义是：
+
+```text
+Grid
+  = 一次 kernel launch 产生的所有 block
+
+Block / CTA
+  = 一组线程，内部共享 shared memory
+  = Phase 6 里基本等价于一个 SIMTCore 实例
+
+Warp
+  = block 内的一组线程，使用同一个 PC 发射指令
+  = scheduler 调度的最小单位
+
+Thread
+  = 真正持有寄存器、thread_id、predicate 的执行实例
+```
+
+在 `gpu_sim.py` 里具体对应：
+
+```python
+grid_dim  -> total_blocks
+block_dim -> total_threads per block
+warp_size -> 每个 warp 有多少 thread
+num_warps_per_block = total_threads // warp_size
+```
+
+然后每个 block 创建一个 `SIMTCore`：
+
+```python
+for block_id in range(total_blocks):
+    core = SIMTCore(
+        warp_size=self.warp_size,
+        num_warps=num_warps_per_block,
+        memory_size=self.memory_size
+    )
+```
+“多个 SM 并行调度 block”指的是：真实 GPU 里，一个 kernel launch 产生很多 block，这些 block 不会只排队给一个核心顺序执行，而是会被分配到多个 **SM Streaming Multiprocessor** 上同时跑。
+
+可以想成：
+
+```text
+kernel<<<grid=8, block=128>>>
+产生 8 个 block
+
+如果 GPU 有 2 个 SM：
+
+SM0 跑 block0
+SM1 跑 block1
+
+block0/1 完成后：
+SM0 再拿 block2
+SM1 再拿 block3
+...
+直到所有 block 跑完
+```
+
+每个 SM 内部再调度自己 block 里的 warps：
+
+```text
+GPU
+├─ SM0
+│  ├─ Block0
+│  │  ├─ Warp0
+│  │  ├─ Warp1
+│  │  └─ ...
+│  └─ Block2
+├─ SM1
+│  ├─ Block1
+│  └─ Block3
+```
+
+而 `phase6_kernel` 当前不是这样。它现在更像：
+
+```text
+Block0 跑完
+Block1 跑完
+Block2 跑完
+...
+```
+
+虽然 `GPUSim(num_sms=...)` 有 `num_sms` 字段，但 `launch_kernel()` 里实际是 **每个 block 创建一个 SIMTCore**，`run()` 再按 `for core in self.cores` 顺序跑完每个 core。所以它有 grid/block/warp/thread 的结构，但还没有真实的 “SM 池 + block 分配器 + 多 SM 同周期推进”。
+
+如果要模拟多个 SM 并行调度 block，通常要改成：
+
+```text
+pending_blocks 队列
+SM0, SM1, ..., SMN
+
+每个 cycle:
+  空闲 SM 从 pending_blocks 取一个 block
+  所有非空闲 SM 各执行一步
+  block 完成后 SM 释放，再取下一个 block
+```
+
+这样 `num_sms=2` 和 `num_sms=8` 的性能周期数就会不同；当前 Phase 6 里基本不会体现这种真实并行收益。
+
+所以它的目的有三层：
+
+1. **表达 CUDA launch 模型**  
+   对应 `kernel<<<grid_dim, block_dim>>>()`，比如 `grid=2, block=8` 就是 2 个 block，每个 block 8 个线程。
+
+2. **给 shared memory/block 语义一个边界**  
+   shared memory 是 per-block 的。不同 block 有各自的 `ThreadBlock.shared_memory`，block 内多个 warp 共享同一块 shared memory。
+
+3. **支持 warp 调度和性能统计**  
+   执行不是按 thread 单独调度，而是 scheduler 选择一个 ready warp，然后这个 warp 内 active threads 一起执行一条指令。这样才能模拟 scoreboard stall、barrier stall、warp scheduling、IPC 等。
+
+不过 Phase 6 还是简化版：它虽然有多个 block，但 `run()` 是按 `self.cores` 顺序跑，**没有真正模拟多个 SM 并行调度 block**。也就是说它建立了 CUDA 的层次结构，但 block 级并行还只是顺序模拟。
+
+
 # 20260514
 
 ## phase3 Q10：PC10 执行完后，怎么知道要从 stack 找 PC5 执行？
