@@ -1,6 +1,15 @@
 
 # 20260521
 
+## phase7 这里为什么是inverse pipeline，为什么要inverse?
+ 解决数据依赖的“同一周期可见性
+在真实的硬件中，寄存器写回（Writeback）和指令发射（Issue）是并行发生的。如果某个 Warp 在周期 $T$ 完成了写回，那么在同一个周期 $T$ 的末尾，发射逻辑理应能察觉到资源已释放。
+
+*   **如果顺序执行（Fetch -> Issue -> Writeback）：**
+    当 Issue 检查 Scoreboard 时，Writeback 还没运行，资源仍被标记为“占用”。这会导致本该在这一周期发射的指令被迫推迟到周期 $T+1$。
+*   **如果逆序执行（Writeback -> Issue -> Fetch）：**
+    先执行 `Writeback` 释放了寄存器和 Bank 资源，随后的 `Issue` 阶段立即就能看到这些可用资源。这在逻辑上等同于硬件中“在时钟上升沿前完成状态更新”，避免了模拟器人为引入的额外延迟。
+
 ## phase6 phase6_kernel\src\gpu_sim.py 分grid, block warp, thread目的是啥
 
 `phase6_kernel/src/gpu_sim.py` 把执行分成 **grid / block / warp / thread**，主要是为了模拟 CUDA/GPU 的真实执行层次，让 Phase 5 之前“单个 SIMTCore 手动跑程序”的模型，升级成“kernel launch”。
