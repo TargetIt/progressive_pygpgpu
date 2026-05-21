@@ -199,7 +199,7 @@ def generate_asm(kernel: CuTileKernel, matrix_data: Dict[str, Dict] = None) -> s
                     lines.append(f"ST r12, [{c_addr}]")
                     lines.append("")
 
-        lines.append("HALT")
+    lines.append("HALT")
 
     return '\n'.join(lines)
 

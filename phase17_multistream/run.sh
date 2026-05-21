@@ -39,6 +39,43 @@ if [ "$1" = "--console" ]; then
     exit $?
 fi
 
+# --cutile: run CuTile DSL pipeline (parse -> assemble -> execute)
+if [ "$1" = "--cutile" ]; then
+    CUTILE="${2:-tests/programs/13_cutile_matmul.cutile}"
+    echo "--- CuTile: $CUTILE ---"
+    PYTHONIOENCODING=utf-8 python -c "
+import sys; sys.path.insert(0, 'src')
+from cutile_parser import assemble_cutile
+from simt_core import SIMTCore
+with open('$CUTILE', encoding='utf-8') as f:
+    src = f.read()
+matrix_data = {
+    'A': {'base': 0, 'M': 2, 'N': 2},
+    'B': {'base': 8, 'M': 2, 'N': 2},
+    'C': {'base': 16, 'M': 2, 'N': 2},
+}
+code, asm_text = assemble_cutile(src, matrix_data)
+print(f'CuTile DSL -> {len(code)} ISA instructions:')
+print(asm_text)
+simt = SIMTCore(warp_size=1, num_warps=1, memory_size=256)
+simt.memory.write_word(0, 1); simt.memory.write_word(1, 2)
+simt.memory.write_word(2, 3); simt.memory.write_word(3, 4)
+simt.memory.write_word(8, 5); simt.memory.write_word(9, 6)
+simt.memory.write_word(10, 7); simt.memory.write_word(11, 8)
+simt.load_program(code)
+simt.run()
+print()
+print('Result C = A x B:')
+expected = {0: 19, 1: 22, 2: 43, 3: 50}
+for i in range(4):
+    actual = simt.memory.read_word(16+i)
+    exp = expected.get(i, '?')
+    ok = 'OK' if actual == exp else f'EXPECTED {exp}'
+    print(f'  C[{i}] = {actual}  ({ok})')
+"
+    exit $?
+fi
+
 # Default: run test suite
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Phase 17: Multi-Stream Test Suite           ║"
