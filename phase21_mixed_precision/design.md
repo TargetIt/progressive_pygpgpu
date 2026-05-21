@@ -1,14 +1,15 @@
-# Phase 15: Compute Graph IR — Design Document / 设计文档
+# Phase 21: Mixed Precision (FP8/FP16/INT8) Compute Graph IR — Design Document / 设计文档
 
 > **对应 GPGPU-Sim**: CUDA Graphs API (cudaGraph)
 > **参考**: NVIDIA CUDA Graphs (docs.nvidia.com/cuda/cuda-c-programming-guide),
+> **Phase 21 新增**: Multi-format tensor operations supporting FP8 (E4M3/E5M2), FP16, INT8, with FP32 high-precision accumulators. Emulates NVIDIA Transformer Engine precision schemes for ML training/inference.
 > XLA HLO (tensorflow.org/xla), MLIR Graph Dialect
 
 ## 1. Introduction / 架构概览
 
 ```
                         ┌──────────────────────────────────────────────────┐
-                        │          Compute Graph IR (Phase 15)           │
+                        │          Compute Graph IR (Phase 21)           │
                         │                                                  │
                         │  GraphNode (DAG Node)                           │
                         │  ┌──────────────────────────────────────┐       │
@@ -316,7 +317,7 @@ digraph "example_pipeline" {
 | `assembler.py` | Two-pass assembler (unchanged) | Same |
 | `simt_core.py` | SIMT pipeline (unchanged) | Same |
 | `cutile_parser.py` | CuTile DSL parser (unchanged, backward compatible) | Same |
-| `learning_console.py` | Interactive console — new `graph` command (Phase 15) | ADDED: `graph` command + `print_graph_info()` |
+| `learning_console.py` | Interactive console — new `graph` command (Phase 21) | ADDED: `graph` command + `print_graph_info()` |
 | All other modules | Unchanged | Same |
 
 ### 4.2 核心数据结构 / Core Data Structures

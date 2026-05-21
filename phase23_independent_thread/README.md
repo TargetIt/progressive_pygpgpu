@@ -1,7 +1,14 @@
+## New in Phase 23: Independent Thread Scheduling
+
+- **Per-thread PC model with independent thread scheduling and hardware-managed reconvergence. Each thread has its own program counter (Volta+ style). Scheduler tracks per-thread state instead of per-warp. Inspired by NVIDIA Volta Independent Thread Scheduling.**
+- **Full backward compatibility**: All existing Phase 0-22 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 23: Independent Thread Scheduling — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 

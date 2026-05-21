@@ -1,7 +1,14 @@
+## New in Phase 22: Async Pipeline
+
+- **Software-managed async pipeline with AsyncTransactionBarrier, PipelineStage phases, and producer/consumer warp patterns. Enables overlapped data loading (TMA/LDS) and computation (MMA). Inspired by CUDA async pipeline and CUTLASS pipeline stages.**
+- **Full backward compatibility**: All existing Phase 0-21 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 22: Async Pipeline — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 

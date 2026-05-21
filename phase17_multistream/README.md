@@ -1,7 +1,14 @@
+## New in Phase 17: Multi-Stream & Async DMA
+
+- **Multi-Stream abstraction (like CUDA streams) with independent command queues and event synchronization. CopyEngine: asynchronous DMA for memory transfers independent of SIMT cores. Enables concurrent kernel execution + data movement.**
+- **Full backward compatibility**: All existing Phase 0-16 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 17: Multi-Stream & Async DMA — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 

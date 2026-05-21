@@ -1,14 +1,15 @@
-# Phase 15: Compute Graph IR — Design Document / 设计文档
+# Phase 22: Async Pipeline Compute Graph IR — Design Document / 设计文档
 
 > **对应 GPGPU-Sim**: CUDA Graphs API (cudaGraph)
 > **参考**: NVIDIA CUDA Graphs (docs.nvidia.com/cuda/cuda-c-programming-guide),
+> **Phase 22 新增**: Software-managed async pipeline with AsyncTransactionBarrier, PipelineStage phases, and producer/consumer warp patterns. Enables overlapped data loading (TMA/LDS) and computation (MMA). Inspired by CUDA async pipeline and CUTLASS pipeline stages.
 > XLA HLO (tensorflow.org/xla), MLIR Graph Dialect
 
 ## 1. Introduction / 架构概览
 
 ```
                         ┌──────────────────────────────────────────────────┐
-                        │          Compute Graph IR (Phase 15)           │
+                        │          Compute Graph IR (Phase 22)           │
                         │                                                  │
                         │  GraphNode (DAG Node)                           │
                         │  ┌──────────────────────────────────────┐       │
@@ -316,7 +317,7 @@ digraph "example_pipeline" {
 | `assembler.py` | Two-pass assembler (unchanged) | Same |
 | `simt_core.py` | SIMT pipeline (unchanged) | Same |
 | `cutile_parser.py` | CuTile DSL parser (unchanged, backward compatible) | Same |
-| `learning_console.py` | Interactive console — new `graph` command (Phase 15) | ADDED: `graph` command + `print_graph_info()` |
+| `learning_console.py` | Interactive console — new `graph` command (Phase 22) | ADDED: `graph` command + `print_graph_info()` |
 | All other modules | Unchanged | Same |
 
 ### 4.2 核心数据结构 / Core Data Structures

@@ -1,7 +1,14 @@
+## New in Phase 20: Tensor Memory Accelerator (TMA)
+
+- **TMA: hardware unit for async tensor address computation and data movement. Offloads address generation from threads. Inspired by NVIDIA Hopper TMA. Supports multi-dimensional tensor descriptors and background DMA transfers.**
+- **Full backward compatibility**: All existing Phase 0-19 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 20: Tensor Memory Accelerator (TMA) — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 

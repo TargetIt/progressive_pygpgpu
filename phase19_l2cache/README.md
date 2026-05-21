@@ -1,7 +1,14 @@
+## New in Phase 19: L2 Cache Hierarchy
+
+- **L2 cache: set-associative (8-way), 256 lines x 4 words, write-back policy, shared across SMs. Located between L1 caches and HBM/DRAM. Full cache hierarchy: L1 (per-SM) -> L2 (shared) -> DRAM.**
+- **Full backward compatibility**: All existing Phase 0-18 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 19: L2 Cache Hierarchy — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 

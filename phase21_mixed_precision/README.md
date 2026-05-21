@@ -1,7 +1,14 @@
+## New in Phase 21: Mixed Precision (FP8/FP16/INT8)
+
+- **Multi-format tensor operations supporting FP8 (E4M3/E5M2), FP16, INT8, with FP32 high-precision accumulators. Emulates NVIDIA Transformer Engine precision schemes for ML training/inference.**
+- **Full backward compatibility**: All existing Phase 0-20 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 21: Mixed Precision (FP8/FP16/INT8) — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 

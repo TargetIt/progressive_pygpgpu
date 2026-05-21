@@ -1,7 +1,14 @@
+## New in Phase 24: Thread Block Cluster
+
+- **Thread Block Cluster with Distributed Shared Memory (DSM) and cluster-wide barriers. Multiple blocks in a cluster share a DSM address space. Enables cross-block cooperation. Inspired by NVIDIA Hopper cluster features.**
+- **Full backward compatibility**: All existing Phase 0-23 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 24: Thread Block Cluster — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 

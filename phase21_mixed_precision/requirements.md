@@ -1,8 +1,8 @@
-# Phase 15: 学习控制台需求 + Warp 通信 + 分块策略 + CuTile 编程模型 + Compute Graph IR
+# Phase 21: 学习控制台需求 + Warp 通信 + 分块策略 + CuTile 编程模型 + Compute Graph IR
 
 ## New Features (2026-05-16) — Phase 15
 
-The following Compute Graph IR features were added in Phase 15:
+The following Compute Graph IR features were added in Phase 21:
 
 - **Compute Graph IR** (`src/graph_ir.py`, ~213 lines): A DAG-based intermediate representation for computation graphs, inspired by NVIDIA CUDA Graphs, XLA HLO, and MLIR Graph Dialect.
   - **GraphNode**: A `@dataclass` with `node_id`, `op_type` ("kernel" | "memcpy" | "barrier" | "input" | "output"), `name`, `params`, and `dependencies` fields.

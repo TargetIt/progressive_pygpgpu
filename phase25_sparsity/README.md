@@ -1,7 +1,14 @@
+## New in Phase 25: Structured Sparsity (2:4)
+
+- **2:4 structured sparsity: sparse tensor operations with sparse MMA, sparsity mask encoding, and dense-to-sparse conversion. Every 4-element group has exactly 2 non-zeros. Inspired by NVIDIA Ampere sparse tensor cores.**
+- **Full backward compatibility**: All existing Phase 0-24 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 25: Structured Sparsity (2:4) — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 

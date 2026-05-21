@@ -1,7 +1,14 @@
+## New in Phase 18: Performance Model & Roofline Analysis
+
+- **Performance model with Roofline analysis: compute-bound vs memory-bound detection, peak throughput estimation (FLOP/s, GB/s), arithmetic intensity calculation, and utilization metrics. Inspired by NVIDIA Nsight Compute.**
+- **Full backward compatibility**: All existing Phase 0-17 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 18: Performance Model & Roofline Analysis — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 

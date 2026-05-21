@@ -1,14 +1,15 @@
-# Phase 15: Compute Graph IR — Design Document / 设计文档
+# Phase 24: Thread Block Cluster Compute Graph IR — Design Document / 设计文档
 
 > **对应 GPGPU-Sim**: CUDA Graphs API (cudaGraph)
 > **参考**: NVIDIA CUDA Graphs (docs.nvidia.com/cuda/cuda-c-programming-guide),
+> **Phase 24 新增**: Thread Block Cluster with Distributed Shared Memory (DSM) and cluster-wide barriers. Multiple blocks in a cluster share a DSM address space. Enables cross-block cooperation. Inspired by NVIDIA Hopper cluster features.
 > XLA HLO (tensorflow.org/xla), MLIR Graph Dialect
 
 ## 1. Introduction / 架构概览
 
 ```
                         ┌──────────────────────────────────────────────────┐
-                        │          Compute Graph IR (Phase 15)           │
+                        │          Compute Graph IR (Phase 24)           │
                         │                                                  │
                         │  GraphNode (DAG Node)                           │
                         │  ┌──────────────────────────────────────┐       │
@@ -316,7 +317,7 @@ digraph "example_pipeline" {
 | `assembler.py` | Two-pass assembler (unchanged) | Same |
 | `simt_core.py` | SIMT pipeline (unchanged) | Same |
 | `cutile_parser.py` | CuTile DSL parser (unchanged, backward compatible) | Same |
-| `learning_console.py` | Interactive console — new `graph` command (Phase 15) | ADDED: `graph` command + `print_graph_info()` |
+| `learning_console.py` | Interactive console — new `graph` command (Phase 24) | ADDED: `graph` command + `print_graph_info()` |
 | All other modules | Unchanged | Same |
 
 ### 4.2 核心数据结构 / Core Data Structures

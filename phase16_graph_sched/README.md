@@ -1,7 +1,14 @@
+## New in Phase 16: Graph Scheduler & Executor
+
+- **GraphExecutor: topological-order execution with kernel fusion (element-wise), critical path analysis, concurrent group detection, memory lifecycle planning, and graph replay. Builds on Phase 15's Compute Graph IR to make graphs executable.**
+- **Full backward compatibility**: All existing Phase 0-15 programs and tests run unchanged
+
+---
+
 ## Quick Start
 
 ```bash
-# Phase 15: Compute Graph IR demo (build + validate + export)
+# Phase 16: Graph Scheduler & Executor — Compute Graph IR demo (build + validate + export)
 
 ## New Features (2026-05-16) — Phase 16
 
