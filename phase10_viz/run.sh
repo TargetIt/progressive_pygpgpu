@@ -37,6 +37,37 @@ if [ "$1" = "--console" ]; then
     exit 1
 fi
 
+
+# --viz: Run visualization analysis (warp timeline + stall analysis)
+if [ "$1" = "--viz" ]; then
+    echo "--- Viz: warp timeline + stall analysis ---"
+    cat > tmp_viz_demo.asm << 'ASM'
+TID r1
+MOV r2, 10
+MUL r3, r1, r2
+ADD r4, r3, r1
+SHST r4, [0]
+SHLD r5, [0]
+ST r5, [100]
+HALT
+ASM
+    PYTHONIOENCODING=utf-8 python -c "
+import sys; sys.path.insert(0, 'src')
+from trace_runner import run_with_trace
+from visualizer import full_report
+from assembler import assemble
+from simt_core import SIMTCore
+with open('tmp_viz_demo.asm', encoding='utf-8') as f:
+    prog = assemble(f.read())
+simt = SIMTCore(warp_size=4, num_warps=2, memory_size=512)
+simt.load_program(prog)
+collector = run_with_trace(simt, max_cycles=500)
+print(full_report(collector, num_warps=2, mem_size=512))
+"
+    rm -f tmp_viz_demo.asm
+    exit $?
+fi
+
 # Default: run test suite
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Phase 10: Visualization & Toolchain Test Suite║"

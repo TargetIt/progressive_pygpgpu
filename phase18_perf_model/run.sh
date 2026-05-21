@@ -76,6 +76,15 @@ for i in range(4):
     exit $?
 fi
 
+
+# --perf: Run performance model analysis
+if [ "$1" = "--perf" ]; then
+    DEMO="${2:-tests/programs/demo_basic.asm}"
+    echo "--- Run performance model analysis: $DEMO ---"
+    PYTHONIOENCODING=utf-8 python src/learning_console.py ${DEMO} --auto --max-cycles 500
+    exit $?
+fi
+
 # Default: run test suite
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Phase 18: Performance Model Test Suite      ║"

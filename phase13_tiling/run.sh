@@ -39,6 +39,15 @@ if [ "$1" = "--console" ]; then
     exit $?
 fi
 
+
+# --tile: Run tiled matmul demo
+if [ "$1" = "--tile" ]; then
+    DEMO="${2:-tests/programs/11_tiled_matmul.asm}"
+    echo "--- Run tiled matmul demo: $DEMO ---"
+    PYTHONIOENCODING=utf-8 python src/learning_console.py ${DEMO} --auto --max-cycles 500
+    exit $?
+fi
+
 # Default: run test suite
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Phase 13: Tiling Test Suite                 ║"

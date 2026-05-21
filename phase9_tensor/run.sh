@@ -39,6 +39,15 @@ if [ "$1" = "--console" ]; then
     exit $?
 fi
 
+
+# --mma: Run MMA tensor core demo
+if [ "$1" = "--mma" ]; then
+    DEMO="${2:-tests/programs/01_mma_dot.asm}"
+    echo "--- Run MMA tensor core demo: $DEMO ---"
+    PYTHONIOENCODING=utf-8 python src/learning_console.py ${DEMO} --auto --max-cycles 500
+    exit $?
+fi
+
 # Default: run test suite
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Phase 9: Tensor Core Test Suite             ║"

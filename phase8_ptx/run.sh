@@ -39,6 +39,15 @@ if [ "$1" = "--console" ]; then
     exit $?
 fi
 
+
+# --ptx: Run PTX frontend demo
+if [ "$1" = "--ptx" ]; then
+    DEMO="${2:-tests/programs/02_scale.ptx}"
+    echo "--- Run PTX frontend demo: $DEMO ---"
+    PYTHONIOENCODING=utf-8 python src/learning_console.py ${DEMO} --auto --max-cycles 500
+    exit $?
+fi
+
 # Default: run test suite
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Phase 8: PTX Frontend Test Suite            ║"

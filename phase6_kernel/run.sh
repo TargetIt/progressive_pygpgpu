@@ -39,6 +39,15 @@ if [ "$1" = "--console" ]; then
     exit $?
 fi
 
+
+# --multi-block: Run multi-block kernel demo
+if [ "$1" = "--multi-block" ]; then
+    DEMO="${2:-tests/programs/02_multi_block.asm}"
+    echo "--- Run multi-block kernel demo: $DEMO ---"
+    PYTHONIOENCODING=utf-8 python src/learning_console.py ${DEMO} --auto --max-cycles 500
+    exit $?
+fi
+
 # Default: run test suite
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Phase 6: Kernel Launch Test Suite           ║"

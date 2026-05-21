@@ -39,6 +39,15 @@ if [ "$1" = "--console" ]; then
     exit $?
 fi
 
+
+# --shfl: Run warp shuffle demo
+if [ "$1" = "--shfl" ]; then
+    DEMO="${2:-tests/programs/09_warp_shfl.asm}"
+    echo "--- Run warp shuffle demo: $DEMO ---"
+    PYTHONIOENCODING=utf-8 python src/learning_console.py ${DEMO} --auto --max-cycles 500
+    exit $?
+fi
+
 # Default: run test suite
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Phase 12: Warp Communication Test Suite     ║"
