@@ -1,4 +1,6 @@
 
+# 20260521
+
 ## phase6 phase6_kernel\src\gpu_sim.py 分grid, block warp, thread目的是啥
 
 `phase6_kernel/src/gpu_sim.py` 把执行分成 **grid / block / warp / thread**，主要是为了模拟 CUDA/GPU 的真实执行层次，让 Phase 5 之前“单个 SIMTCore 手动跑程序”的模型，升级成“kernel launch”。
